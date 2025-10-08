@@ -19,8 +19,6 @@ on:
 env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-  USERNAME: TrendAndrew
-  #${{ github.actor }}
 
 
 jobs:
@@ -54,11 +52,11 @@ jobs:
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
-      - name: Log into registry ${{ env.REGISTRY }}, ${{ github.actor }}, ${{ env.USERNAME }}, ${{ env.IMAGE_NAME }}
+      - name: Log into registry ${{ github.actor }}, ${{ secrets.DOCKERHUB_PASSWORD }}, ${{ env.IMAGE_NAME }}
         if: github.event_name != 'pull_request'
         uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
         with:
-          username: ${{ env.USERNAME }}
+          username: ${{ github.actor }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       # Extract metadata (tags, labels) for Docker
@@ -67,7 +65,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.IMAGE_NAME }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
